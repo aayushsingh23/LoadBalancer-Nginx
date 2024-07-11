@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-loadbalance-config
+data:
+  nginx.conf: |
+    events { }
+
+    http {
+        upstream backend {
+            least_conn;
+            server backend1-service.default.svc.cluster.local;
+            server backend2-service.default.svc.cluster.local;
+        }
+
+        server {
+            listen 80;
+
+            location / {
+                proxy_pass http://backend;
+            }
+        }
+    }
